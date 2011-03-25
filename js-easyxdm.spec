@@ -2,7 +2,7 @@ Summary:	jQuery JavaScript Library
 Summary(pl.UTF-8):	Biblioteka JavaScriptu jQuery
 Name:		js-easyxdm
 Version:	2.4.10.103
-Release:	0.1
+Release:	1
 License:	MIT
 Group:		Applications/WWW
 Source0:	https://github.com/downloads/oyvindkinsey/easyXDM/easyXDM-%{version}.zip
