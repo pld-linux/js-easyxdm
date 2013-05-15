@@ -2,7 +2,7 @@ Summary:	jQuery JavaScript Library
 Summary(pl.UTF-8):	Biblioteka JavaScriptu jQuery
 Name:		js-easyxdm
 Version:	2.4.11.104
-Release:	1
+Release:	2
 License:	MIT
 Group:		Applications/WWW
 Source0:	https://github.com/downloads/oyvindkinsey/easyXDM/easyXDM-%{version}.zip
@@ -14,6 +14,7 @@ BuildRequires:	unzip
 BuildRequires:	yuicompressor
 Requires:	webserver(access)
 Requires:	webserver(alias)
+Conflicts:	apache-base < 2.4.0-1
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -31,11 +32,19 @@ API's across domain boundaries.
 %prep
 %setup -qc
 
-# Apache1/Apache2 config
+# Apache1 config
 cat > apache.conf <<'EOF'
 Alias /js/easyXDM/ %{_appdir}/
 <Directory %{_appdir}>
 	Allow from all
+</Directory>
+EOF
+
+# Apache2 config
+cat > httpd.conf <<'EOF'
+Alias /js/easyXDM/ %{_appdir}/
+<Directory %{_appdir}>
+	Require all granted
 </Directory>
 EOF
 
@@ -60,7 +69,7 @@ cp -p build/easyXDM.js $RPM_BUILD_ROOT%{_appdir}
 
 install -d $RPM_BUILD_ROOT%{_sysconfdir}
 cp -a apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
-cp -a apache.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
+cp -a httpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
 cp -a lighttpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/lighttpd.conf
 
 %clean
@@ -72,10 +81,10 @@ rm -rf $RPM_BUILD_ROOT
 %triggerun -- apache1 < 1.3.37-3, apache1-base
 %webapp_unregister apache %{_webapp}
 
-%triggerin -- apache < 2.2.0, apache-base
+%triggerin -- apache-base
 %webapp_register httpd %{_webapp}
 
-%triggerun -- apache < 2.2.0, apache-base
+%triggerun -- apache-base
 %webapp_unregister httpd %{_webapp}
 
 %triggerin -- lighttpd
